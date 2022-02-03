@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import axios from 'axios';
-import { 
-    CssBaseline,
+import { useState, useContext } from 'react';
+import { useNavigate, useLocation } from "react-router-dom";
+import { useSnackbar } from 'notistack';
+import {
     Box,
     Paper,
     FormControl,
@@ -14,8 +14,8 @@ import {
 import { grey } from '@mui/material/colors';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { useNavigate, useLocation } from "react-router-dom";
-import { AUTH_TOKEN } from '../../common/constants';
+import UserContext from '@common/contexts/UserContext';
+import { authorise } from '@common/api';
 
 function Login() {
     const [values, setValues] = useState({
@@ -23,6 +23,8 @@ function Login() {
         password: '',
         showPassword: false,
     });
+    const { setUser } = useContext(UserContext)
+    const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
@@ -44,21 +46,21 @@ function Login() {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        console.log('submit');
-        axios.post('http://165.227.140.158:1337/auth/local/',{
-            identifier: values.login,
-            password: values.password
-        })
-        .then(resp => {
-            const { jwt } = resp.data;
-            localStorage.setItem(AUTH_TOKEN, jwt);
-            navigate(from, { replace: true });
-        })
+        const { login, password } = values;
+        
+        authorise(login, password)
+            .then(user => {
+                setUser(user);
+                navigate(from, { replace: true });
+            })
+            .catch((data) => {
+                const { message } = data.message[0].messages[0];
+                enqueueSnackbar(message, { variant: 'error' })
+            })
     }
 
     return (
         <>
-            <CssBaseline />
             <Box 
                 fixed 
                 sx={{

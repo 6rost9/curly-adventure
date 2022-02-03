@@ -1,10 +1,9 @@
-import { useContext } from 'react';
-import UserContext from '@common/contexts/UserContext';
+// import { useContext } from 'react';
+// import UserContext from '@common/contexts/UserContext';
 import { Box, Typography } from '@mui/material';
 
-const Home = () => {
-    const { user} = useContext(UserContext);
-    const { username } = user || {};
+const NotFound = () => {
+
 
     return (
         <Box
@@ -15,11 +14,11 @@ const Home = () => {
             }}
         >
             <Typography variant='h1'>
-                Welcome {username}!
+                Not found
             </Typography>
         </Box>
     );
   }
   
-  export default Home;
+  export default NotFound;
   
