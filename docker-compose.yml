@@ -1,0 +1,12 @@
+
+# for development / local build only
+
+version: '3.5'
+services:
+    frontend:
+        build:
+            context: .
+        command: "npm start"
+        ports:
+            - 3000:3000
+
